@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { Column as ColumnType, useBoardStore } from "../store/useBoardStore";
 import Card from "./Card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ColumnProps {
   boardId: string;
@@ -9,53 +11,45 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ boardId, column }) => {
-  const { addCard, deleteColumn, deleteCard } = useBoardStore();
+  const { addCard, deleteColumn } = useBoardStore();
   const { setNodeRef } = useDroppable({
     id: column.id,
-    data: {
-      type: "column",
-      columnId: column.id,
-    },
+    data: { type: "column", columnId: column.id },
   });
 
   const [cardTitle, setCardTitle] = useState("");
 
   return (
-    <div ref={setNodeRef} className="bg-gray-800 p-4 rounded-lg w-72 shadow-lg flex flex-col  ">
-      {/* Column Header */}
+    <div ref={setNodeRef} className="bg-gray-800 p-4 rounded-lg w-72 shadow-lg flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-bold text-white">{column.name}</h3>
-        <button
-          onClick={() => deleteColumn(boardId, column.id)}
-          className="bg-red-600 text-white px-2 py-1 rounded text-sm"
-        >
+        <Button variant="destructive" size="sm" onClick={() => deleteColumn(boardId, column.id)}>
           ✖
-        </button>
+        </Button>
       </div>
 
-      {/* Add Card */}
       <div className="flex gap-2 mb-4">
-        <input
+        <Input
           type="text"
           placeholder="New Card"
           value={cardTitle}
           onChange={(e) => setCardTitle(e.target.value)}
-          className="border p-2 rounded w-full bg-gray-700 text-white"
+          className="w-full"
         />
-        <button
+        <Button
+          variant="default"
+          size="sm"
           onClick={() => {
             if (cardTitle.trim()) {
               addCard(boardId, column.id, cardTitle);
               setCardTitle("");
             }
           }}
-          className="bg-green-500 text-white px-3 py-2 rounded"
         >
           ➕
-        </button>
+        </Button>
       </div>
 
-      {/* Cards */}
       <div className="flex flex-col gap-2">
         {column.cards.map((card) => (
           <Card key={card.id} boardId={boardId} columnId={column.id} card={card} />

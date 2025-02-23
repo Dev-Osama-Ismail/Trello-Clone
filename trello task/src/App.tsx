@@ -5,14 +5,11 @@ import './App.css'
 import AppRouter from "./routers/AppRouter.tsx";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-<div className="min-h-screen bg-gray-100">
-      <AppRouter />
-    </div>
-
+      <div className="min-h-screen bg-gray-100">
+        <AppRouter />
+      </div>
     </>
   )
 }

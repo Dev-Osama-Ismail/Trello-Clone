@@ -1,6 +1,7 @@
 import React from "react";
 import { Card as CardType, useBoardStore } from "../store/useBoardStore";
 import { useDraggable } from "@dnd-kit/core";
+import { Button } from "@/components/ui/button";
 
 interface CardProps {
   boardId: string;
@@ -14,7 +15,7 @@ const Card: React.FC<CardProps> = ({ boardId, columnId, card }) => {
     id: card.id,
     data: {
       type: "card",
-      columnId: columnId,
+      columnId,
     },
   });
 
@@ -23,31 +24,15 @@ const Card: React.FC<CardProps> = ({ boardId, columnId, card }) => {
     : undefined;
 
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      style={style}
-      className="cursor-grab active:cursor-grabbing"
-    >
+    <div ref={setNodeRef} {...listeners} {...attributes} style={style} className="cursor-grab active:cursor-grabbing">
       <div className="block max-w-sm p-4 bg-white border border-gray-300 rounded-lg shadow-sm">
-        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{card.title}</h5>
+        <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">{card.title}</h5>
         <p className="text-gray-700">This is a draggable card.</p>
       </div>
 
-      <button
-  onMouseDown={(e) => {
-
-
-    deleteCard(boardId, columnId, card.id);
-  }}
-  className="bg-red-500 text-white px-3 py-1 rounded mt-2 text-sm w-full hover:bg-red-600"
->
-  ✖ Delete
-</button>
-
-
-
+      <Button variant="destructive" className="w-full mt-2" onMouseDown={() => deleteCard(boardId, columnId, card.id)}>
+        ✖ Delete
+      </Button>
     </div>
   );
 };
