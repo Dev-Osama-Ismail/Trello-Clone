@@ -29,12 +29,14 @@ const Home: React.FC = () => {
           Create Board
         </button>
       ) : (
-        <Link
-          to={`/board/${boards[0].id}`}
-          className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300"
-        >
-          Go to My Board
-        </Link>
+        boards[0] && ( // ✅ Ensure boards[0] exists before accessing id
+          <Link
+            to={`/board/${boards[0].id}`}
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300"
+          >
+            Go to My Board
+          </Link>
+        )
       )}
     </div>
   );

@@ -20,7 +20,7 @@ export interface Board {
 
 interface BoardState {
   boards: Board[];
-  addBoard: (name: string) => void;
+  addBoard: (name: string) => string;
   deleteBoard: (boardId: string) => void;
   addColumn: (boardId: string, columnName: string) => void;
   deleteColumn: (boardId: string, columnId: string) => void;
@@ -38,18 +38,20 @@ export const useBoardStore = create<BoardState>()(
   persist(
     (set, get) => ({
       boards: [],
-
-      addBoard: (name: string) => {
+      addBoard: (name: string): string => {
         const newBoard = { id: crypto.randomUUID(), name, columns: [] };
         
+        let newBoards: Board[] = [];
         set((state) => {
-          const updatedBoards = [...state.boards, newBoard];
-          channel.postMessage(updatedBoards);
-          return { boards: updatedBoards };
+          newBoards = [...state.boards, newBoard]; // ✅ Update outside `set()`
+          return { boards: newBoards };
         });
       
-        return newBoard.id; // ✅ Ensure addBoard returns the new board ID
-      },
+        channel.postMessage(newBoards);
+        return newBoard.id; 
+      }
+      
+,      
       
 
         deleteBoard: (boardId) =>
@@ -57,17 +59,29 @@ export const useBoardStore = create<BoardState>()(
             boards: state.boards.filter((board) => board.id !== boardId),
           })),
 
-      addColumn: (boardId, columnName) =>
-        set((state) => {
-          const updatedBoards = state.boards.map((board) =>
-            board.id === boardId
-              ? { ...board, columns: [...board.columns, { id: crypto.randomUUID(), name: columnName, cards: [] }] }
-              : board
-          );
-          channel.postMessage(updatedBoards);
-          return { boards: updatedBoards };
-        }),
-
+          addColumn: (boardId, columnName) =>
+            set((state) => {
+              const updatedBoards = state.boards.map((board) =>
+                board.id === boardId
+                  ? {
+                      ...board,
+                      columns: [
+                        ...board.columns,
+                        { id: crypto.randomUUID(), name: columnName, cards: [] },
+                      ],
+                    }
+                  : board
+              );
+          
+              set({ boards: updatedBoards });
+          
+              console.log("Broadcasting updated boards:", updatedBoards);
+          
+              // ✅ Broadcast the updated boards list
+              channel.postMessage({ type: "sync-boards", boards: updatedBoards });
+          
+              return { boards: updatedBoards };
+            }),
       deleteColumn: (boardId, columnId) =>
         set((state) => {
           const updatedBoards = state.boards.map((board) =>
@@ -79,43 +93,48 @@ export const useBoardStore = create<BoardState>()(
           return { boards: updatedBoards };
         }),
 
-      addCard: (boardId, columnId, cardTitle) =>
-        set((state) => {
-          const updatedBoards = state.boards.map((board) =>
-            board.id === boardId
-              ? {
-                  ...board,
-                  columns: board.columns.map((column) =>
-                    column.id === columnId
-                      ? { ...column, cards: [...column.cards, { id: crypto.randomUUID(), title: cardTitle }] }
-                      : column
-                  ),
-                }
-              : board
-          );
-          channel.postMessage(updatedBoards);
-          return { boards: updatedBoards };
-        }),
-        deleteCard: (boardId, columnId, cardId) =>
+        addCard: (boardId, columnId, cardTitle) =>
           set((state) => {
-            console.log(boardId)
             const updatedBoards = state.boards.map((board) =>
               board.id === boardId
                 ? {
                     ...board,
-                    columns: board.columns.map((col) =>
-                      col.id === columnId
-                        ? { ...col, cards: col.cards.filter((card) => card.id !== cardId) }
-                        : col
+                    columns: board.columns.map((column) =>
+                      column.id === columnId
+                        ? { ...column, cards: [...column.cards, { id: crypto.randomUUID(), title: cardTitle }] }
+                        : column
                     ),
                   }
                 : board
             );
         
-            set({ boards: updatedBoards }); // ✅ Ensure Zustand updates state
-            channel.postMessage(updatedBoards); // ✅ Sync across tabs
+            console.log("Broadcasting updated cards:", updatedBoards);
+            channel.postMessage({ type: "sync-boards", boards: updatedBoards });
+        
             return { boards: updatedBoards };
           }),
+        
+          deleteCard: (boardId, columnId, cardId) =>
+            set((state) => {
+              const updatedBoards = state.boards.map((board) =>
+                board.id === boardId
+                  ? {
+                      ...board,
+                      columns: board.columns.map((column) =>
+                        column.id === columnId
+                          ? { ...column, cards: column.cards.filter((card) => card.id !== cardId) }
+                          : column
+                      ),
+                    }
+                  : board
+              );
+          
+              console.log("Broadcasting delete card update:", updatedBoards);
+              channel.postMessage({ type: "sync-boards", boards: updatedBoards });
+          
+              return { boards: updatedBoards };
+            }),
+          
         
         
 
@@ -200,7 +219,12 @@ export const useBoardStore = create<BoardState>()(
   )
 );
 
-// ✅ Listen for updates across tabs
 channel.onmessage = (event) => {
-  useBoardStore.getState().syncBoards(event.data);
+  console.log("Received broadcast message:", event.data);
+
+  if (event.data.type === "sync-boards") {
+    // ✅ Ensure boards is an array before updating Zustand
+    const newBoards = Array.isArray(event.data.boards) ? event.data.boards : [];
+    useBoardStore.setState({ boards: newBoards });
+  }
 };
