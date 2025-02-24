@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { Column as ColumnType, useBoardStore } from "../store/useBoardStore";
 import Card from "./Card";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2 } from "lucide-react"; // Importing icons
+import { Plus, Trash2 } from "lucide-react";
 
 interface ColumnProps {
   boardId: string;
@@ -30,7 +30,6 @@ const Column: React.FC<ColumnProps> = ({ boardId, column }) => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Column Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-bold text-white">{column.name}</h3>
         <button
@@ -40,8 +39,6 @@ const Column: React.FC<ColumnProps> = ({ boardId, column }) => {
           <Trash2 size={18} />
         </button>
       </div>
-
-      {/* Add Card */}
       <div className="flex gap-2 mb-4">
         <input
           type="text"
@@ -63,7 +60,6 @@ const Column: React.FC<ColumnProps> = ({ boardId, column }) => {
         </button>
       </div>
 
-      {/* Cards List with Animation */}
       <AnimatePresence>
         {column.cards.map((card) => (
           <motion.div

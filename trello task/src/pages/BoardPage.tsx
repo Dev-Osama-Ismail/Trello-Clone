@@ -27,7 +27,7 @@ const BoardPage: React.FC = () => {
     deleteBoard,
     addColumn,
     undo,
-    redo, // ✅ Use redo function
+    redo,
   } = useBoardStore();
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
@@ -62,7 +62,6 @@ const BoardPage: React.FC = () => {
     return () => channel.close();
   }, []);
 
-  // ✅ Listen for Undo/Redo keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "z") {

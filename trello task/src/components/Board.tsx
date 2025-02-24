@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useBoardStore } from "../store/useBoardStore";
 import Column from "./Column";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 const Board: React.FC = () => {
   const { boards, addBoard, addColumn } = useBoardStore();
@@ -8,20 +11,18 @@ const Board: React.FC = () => {
   const [columnName, setColumnName] = useState("");
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">Trello Board</h1>
+    <div className="p-6 bg-background min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-white">Trello Board</h1>
 
-      {/* Create New Board */}
-      <div className="mb-6 flex gap-2">
-        <input
+      <div className="flex gap-2 mb-6">
+        <Input
           type="text"
-          placeholder="Board Name"
+          placeholder="Enter board name..."
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
-          className="border p-2 rounded"
+          className="w-full"
         />
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+        <Button
           onClick={() => {
             if (boardName.trim()) {
               addBoard(boardName);
@@ -30,23 +31,23 @@ const Board: React.FC = () => {
           }}
         >
           Add Board
-        </button>
+        </Button>
       </div>
 
       {boards.map((board) => (
-        <div key={board.id} className="mb-6 p-4 bg-white rounded shadow-md">
-          <h2 className="text-xl font-bold mb-3">{board.name}</h2>
+        <Card key={board.id} className="p-4 mb-6 bg-card shadow-lg">
+          <h2 className="text-xl font-semibold mb-4 text-white">{board.name}</h2>
 
           <div className="flex gap-2 mb-4">
-            <input
+            <Input
               type="text"
-              placeholder="Column Name"
+              placeholder="Enter column name..."
               value={columnName}
               onChange={(e) => setColumnName(e.target.value)}
-              className="border p-2 rounded"
+              className="w-full"
             />
-            <button
-              className="bg-green-500 text-white px-4 py-2 rounded"
+            <Button
+              variant="secondary"
               onClick={() => {
                 if (columnName.trim()) {
                   addColumn(board.id, columnName);
@@ -55,14 +56,15 @@ const Board: React.FC = () => {
               }}
             >
               Add Column
-            </button>
+            </Button>
           </div>
-          <div className="flex gap-4">
+
+          <div className="flex gap-4 overflow-x-auto">
             {board.columns.map((column) => (
               <Column key={column.id} boardId={board.id} column={column} />
             ))}
           </div>
-        </div>
+        </Card>
       ))}
     </div>
   );

@@ -5,24 +5,21 @@ export interface Card {
   id: string;
   title: string;
 }
-
 export interface Column {
   id: string;
   name: string;
   cards: Card[];
 }
-
 export interface Board {
   id: string;
   name: string;
   columns: Column[];
 }
-
 interface BoardState {
   boards: Board[];
   selectedBoardId: string;
-  past: Board[][]; // Stores previous states for Undo
-  future: Board[][]; // Stores undone states for Redo
+  past: Board[][]
+  future: Board[][]; 
   setSelectedBoardId: (boardId: string) => void;
   saveState: () => void;
   undo: () => void;
@@ -53,7 +50,7 @@ export const useBoardStore = create<BoardState>()(
         const state = get();
         set({
           past: [...state.past, state.boards],
-          future: [], // Clear redo history when a new change is made
+          future: [], 
         });
       },
 
@@ -65,7 +62,7 @@ export const useBoardStore = create<BoardState>()(
           const newPast = state.past.slice(0, -1);
           const newFuture = [state.boards, ...state.future];
       
-          channel.postMessage({ type: "sync-boards", boards: previous }); // ✅ Sync state
+          channel.postMessage({ type: "sync-boards", boards: previous }); 
           return { boards: previous, past: newPast, future: newFuture };
         });
       },
@@ -78,7 +75,7 @@ export const useBoardStore = create<BoardState>()(
           const newFuture = state.future.slice(1);
           const newPast = [...state.past, state.boards];
       
-          channel.postMessage({ type: "sync-boards", boards: next }); // ✅ Sync state
+          channel.postMessage({ type: "sync-boards", boards: next }); 
           return { boards: next, past: newPast, future: newFuture };
         });
       },
@@ -90,7 +87,7 @@ export const useBoardStore = create<BoardState>()(
         set({ boards: newBoards, selectedBoardId: newBoard.id });
       
         channel.postMessage({ type: "sync-boards", boards: newBoards });
-        channel.postMessage({ type: "add-board", boards: newBoards, boardId: newBoard.id }); // ✅ Explicitly broadcast addBoard event
+        channel.postMessage({ type: "add-board", boards: newBoards, boardId: newBoard.id });
       
         return newBoard.id;
       },      
@@ -200,7 +197,7 @@ export const useBoardStore = create<BoardState>()(
 
       syncBoards: (newBoards) => {
         set(() => ({ boards: newBoards }));
-        localStorage.setItem("boards", JSON.stringify(newBoards)); // ✅ Persist in LocalStorage
+        localStorage.setItem("boards", JSON.stringify(newBoards)); 
       },
     }),
     {
@@ -218,8 +215,6 @@ channel.onmessage = (event) => {
   if (event.data.type === "update-selected-board") {
     useBoardStore.setState({ selectedBoardId: event.data.boardId });
   }
-
-  // ✅ Force sync if new board is added
   if (event.data.type === "add-board") {
     useBoardStore.setState({ boards: event.data.boards, selectedBoardId: event.data.boardId });
     localStorage.setItem("boards", JSON.stringify(event.data.boards));

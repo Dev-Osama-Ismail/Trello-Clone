@@ -17,8 +17,8 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gray-900 text-white p-6">
       <Card className="w-full max-w-xl text-center bg-gray-800 border border-gray-700 shadow-lg p-6">
-        <h1 className="text-5xl font-bold mb-4">Welcome to Trello Clone</h1>
-        <p className="text-lg text-gray-300 mb-6">
+      <h1 className="text-5xl font-bold mb-4 text-white">Welcome to Trello Clone</h1>
+      <p className="text-lg text-gray-300 mb-6">
           Organize your tasks and projects efficiently.
         </p>
 

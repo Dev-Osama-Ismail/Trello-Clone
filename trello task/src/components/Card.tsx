@@ -3,6 +3,7 @@ import { Card as CardType, useBoardStore } from "../store/useBoardStore";
 import { useDraggable } from "@dnd-kit/core";
 import { motion } from "framer-motion";
 import { Trash } from "lucide-react";
+import { Button } from "@/components/ui/button"; // Importing ShadCN button
 
 interface CardProps {
   boardId: string;
@@ -37,17 +38,18 @@ const Card: React.FC<CardProps> = ({ boardId, columnId, card }) => {
       transition={{ type: "spring", stiffness: 200, damping: 15 }}
     >
       <div className="relative block max-w-sm p-4 bg-white border border-gray-300 rounded-lg shadow-sm">
-        
-        {/* Delete Button - Positioned at the Top-Right */}
-        <button
-          onMouseDown={() => deleteCard(boardId, columnId, card.id)} // ✅ Removed unused event (e)
-          className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition"
+        <Button
+          variant="destructive"
+          size="icon"
+          onMouseDown={() => deleteCard(boardId, columnId, card.id)}
+          className="absolute top-2 right-2"
         >
           <Trash size={16} />
-        </button>
+        </Button>
 
-        {/* Card Content */}
-        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{card.title}</h5>
+        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+          {card.title}
+        </h5>
         <p className="text-gray-700 text-sm">You can change this card</p>
       </div>
     </motion.div>
