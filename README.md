@@ -9,7 +9,9 @@ and **offline support**. The UI is fully responsive, styled with TailwindCSS and
 
 ##  Installation
 git clone https://github.com/your-username/trello-clone.git
+then
 cd trello-clone
+then
 cd "trello task" 
 npm install
 
