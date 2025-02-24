@@ -13,6 +13,7 @@ then
 cd trello-clone
 then
 cd "trello task" 
+then
 npm install
 
 * Running Locally
