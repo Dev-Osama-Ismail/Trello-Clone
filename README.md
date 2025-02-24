@@ -8,7 +8,7 @@ and **offline support**. The UI is fully responsive, styled with TailwindCSS and
  **[Trello Clone](https://trello-clone-osama-ismail.netlify.app/)**
 
 ##  Installation
-git clone https://github.com/your-username/trello-clone.git
+git clone https://github.com/Dev-Osama-Ismail/Trello-Clone.git
 then
 cd trello-clone
 then
