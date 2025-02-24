@@ -33,12 +33,10 @@ const Board: React.FC = () => {
         </button>
       </div>
 
-      {/* Show Boards and Columns */}
       {boards.map((board) => (
         <div key={board.id} className="mb-6 p-4 bg-white rounded shadow-md">
           <h2 className="text-xl font-bold mb-3">{board.name}</h2>
 
-          {/* Create New Column */}
           <div className="flex gap-2 mb-4">
             <input
               type="text"
@@ -59,8 +57,6 @@ const Board: React.FC = () => {
               Add Column
             </button>
           </div>
-
-          {/* Render Columns */}
           <div className="flex gap-4">
             {board.columns.map((column) => (
               <Column key={column.id} boardId={board.id} column={column} />
