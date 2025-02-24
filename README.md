@@ -8,9 +8,9 @@ and **offline support**. The UI is fully responsive, styled with TailwindCSS and
  **[Trello Clone](https://trello-clone-osama-ismail.netlify.app/)**
 
 ##  Installation
-```sh
 git clone https://github.com/your-username/trello-clone.git
 cd trello-clone
+cd "trello task" 
 npm install
 
 * Running Locally
